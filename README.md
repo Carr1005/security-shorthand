@@ -85,26 +85,33 @@ References
 ### 總覽式的文章
 
  * https://crackstation.net/hashing-security.htm#properhashing (2016 0219)
+   
    這篇寫得非常好，時間新，而且提到許多有關實作的建議、跟會用到的library，作者有PBKDF2的repository，這篇速記基本上以這篇文章為主軸。
 
  * http://security.blogoverflow.com/2013/09/about-secure-password-hashing (2013 0913)
 
  * http://security.stackexchange.com/questions/211/how-to-securely-hash-passwords/31846#31846 (2013 0302)
+   
    以上兩篇對於KDF有更詳盡的介紹。 
 
 ### Pepper，HMAC，KDF
  
  * http://security.stackexchange.com/questions/41754/what-is-the-purpose-of-a-pepper (2013 0904)
+   
    這篇的評論部分有點出KDF裡的HMAC的使用方法稍有不同。
 
  * http://security.stackexchange.com/questions/29951/salted-hashes-vs-hmac (2013 0130)
-   這篇提到到HMAC的特性適合使用在PBKDF2裡。
+   
+   這篇提到HMAC的特性適合使用在PBKDF2裡。
 
  * http://crypto.stackexchange.com/questions/20578/definition-of-pepper-in-hash-functions
+   
    Pepper定義的討論
 
  * http://stackoverflow.com/questions/5051529/hmac-vs-simple-md5-hash
+   
    HMAC vs 一般Hash function的討論
 
  * http://stackoverflow.com/questions/8952807/openssl-digest-vs-hash-vs-hash-hmac-difference-between-salt-hmac
+   
    這篇以非常簡單的方式解釋KDF的演算法，有助於之後implement KDF，值得一看。
