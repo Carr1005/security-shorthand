@@ -60,7 +60,7 @@ finalhv = MD5( HMAC(pepper,password) + salt )
 
 +  **pepper為甚麼一定要搭配HMAC ? 不能用一般的hash function就好?**
 
-  HMAC誕生的原因，是因為一般hash function 例如MD5，SHA-1…等其函式 H(key+message) 跟 H(message+key) 分別會造成length-extention attack跟hash collision，HMAC則以 H(key+H(key+message)) 的方式來設計。所以HMAC其實還是會以某種一般hash function為基底，例如 HMAC-MD5就是以MD5為基底，但HMAC  function可以克服其基底有的上述漏洞。
+  HMAC誕生的原因，是因為一般hash function 例如MD5，SHA-1 … 等函式的 H(key+message) 跟 H(message+key) 使用方式，分別會造成length-extention attack跟hash collision，HMAC則以 H(key+H(key+message)) 的方式來設計。所以HMAC其實還是會以某種一般hash function為基底，例如 HMAC-MD5就是以MD5為基底，但HMAC  function可以克服其基底有的上述漏洞。
 
   一般的hash function的設計會使得attacker可以在不知道key值的情況下施以 length-extension attack(所以絕對不會被知道的key，就變成根本不需要被知道)，雖然還不清楚要如何利用這點加速做到有效的破解，但是HMCA可以防止這樣的情況(意即必須知道key值(pepper)才有威脅，key值的保密是有意義的)。
 
