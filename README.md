@@ -26,22 +26,22 @@ MD5(password+random salt)
 ```
 讓每個password都加上一個random的salt再做hash，這個salt值不需要再做甚麼處理，直接存在資料庫，為甚麼固定的時候保護就很重要，現在就可以那麼赤裸的存在資料庫? 因為這不影響它要達到的效果:
 
-##### 1.杜絕Statistics Attack
++  1.杜絕Statistics Attack
 
 每個人的salt值都是不一樣的，所以即使密碼是一樣的，其hash出來的值也會不同，Attacker的確可以拿某一筆hash值跟它相對應的salt開始利用dictionary重算對照表，並且開始做比對。但它已經無法像salt是固定時一樣，先group，再找到好下手的高頻率hash值，倘若真的被對到了，也就只危害一個帳號。
 
-##### 2.降低危害效率
++  2.降低危害效率
 
 除了不怕因為相同密碼而變成Statistics Attack的肥羊，salt是固定的情況下暴露，只要重新計算一張precompute table，就可以開始比對資料庫裡所有的hash值，而當每個人的salt都不同，那precompute table就要不斷重算。
 
 
 目前的方法，讓attacker在即使能看到資料庫裡面的資料，也必須對於每一對密碼跟hash值重新使用像是dictionary這樣brute force的方法去破解，但可能會有幾個疑問:
 
-##### 既然都可以看到資料庫的資料了，那attacker還需要去破解密碼，然後登入查看該帳號的相關資料嗎 ?
++  既然都可以看到資料庫的資料了，那attacker還需要去破解密碼，然後登入查看該帳號的相關資料嗎 ?
 
 首先，讓attacker不知道密碼還是很重要的，倘若密碼真正的值被得知了，attacker很可能用這組密碼去試圖登入別的網站，因為人們總是會常用同一組密碼。又或者一些線上交易有關的服務，會要求再一次輸入密碼。(不常在網路上購物，純屬猜想，如果真的有這種機制，顯然不是很安全)
 
-##### 資料庫都外洩了，attacker有很大的機會是有辦法直接以一對明碼跟hash值，換掉某一會員原本的資料的，這樣加密不就沒意義了嗎?
++  資料庫都外洩了，attacker有很大的機會是有辦法直接以一對明碼跟hash值，換掉某一會員原本的資料的，這樣加密不就沒意義了嗎?
 
 這在剛剛假設的線上交易的情形的確就很危險了，雖然如此原本的密碼還是沒有洩漏，若要預防SQL Injection來達成這個目的，後端程式的流程設計就很重要，可以讓後端程式碼在連接資料庫方面分別有read權限，和read_write權限的帳號，想清楚可能注入點所對應的功能是否需要給到read write權限。如果發現hash 值被盜走並且破解了，還是趕緊通知該會員重設密碼，修補程式漏洞吧。
 
@@ -58,7 +58,8 @@ finalhv = MD5( HMAC(pepper,password) + salt )
 
 這樣的情況下要猜pepper的值的話，假設它是random的128 bit，保證算到天荒地老算不出來。[連結裡有計算範例](http://stackoverflow.com/questions/1354999/keep-me-logged-in-the-best-approach)
 
-##### pepper為甚麼一定要搭配HMAC ? 不能用一般的hash function就好?
++  pepper為甚麼一定要搭配HMAC ? 不能用一般的hash function就好?
+
 HMAC誕生的原因，是因為一般hash function 例如MD5，SHA-1…等其函式 H(key+message) 跟 H(message+key) 分別會造成length-extention attack跟hash collision，HMAC則以 H(key+H(key+message)) 的方式來設計。所以HMAC其實還是會以某種一般hash function為基底，例如 HMAC-MD5就是以MD5為基底，但HMAC  function可以克服其基底有的上述漏洞。
 
 一般的hash function的設計會使得attacker可以在不知道key值的情況下施以 length-extension attack(所以絕對不會被知道的key，就變成根本不需要被知道)，雖然還不清楚要如何利用這點加速做到有效的破解，但是HMCA可以防止這樣的情況(意即必須知道key值(pepper)才有威脅，key值的保密是有意義的)。
