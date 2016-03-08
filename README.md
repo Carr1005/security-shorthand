@@ -50,7 +50,7 @@ finalhv = MD5( HMAC(pepper,password) + salt )
 到這裡又要自問自答一下:
 
 #####pepper雖然不知道，但不能用brute force的方法猜嗎 ?
-  這樣的情況下要猜pepper的值的話，假設它是random的128 bit，保證算到天荒地老算不出來。[這個連結裡有詳細的計算](http://stackoverflow.com/questions/1354999/keep-me-logged-in-the-best-approach)
+  這樣的情況下要猜pepper的值的話，假設它是random的128 bit，保證算到天荒地老算不出來。[連結裡有計算範例](http://stackoverflow.com/questions/1354999/keep-me-logged-in-the-best-approach)
 
 #####pepper為甚麼一定要搭配HMAC ? 不能用一般的hash function就好?
   HMAC誕生的原因，是因為一般hash function 例如MD5，SHA-1…等其函式 H(key+message) 跟 H(message+key) 分別會造成length-extention attack跟hash collision，HMAC則以 H(key+H(key+message)) 的方式來設計。所以HMAC其實還是會以某種一般hash function為基底，例如 HMAC-MD5就是以MD5為基底，但HMAC  function可以克服其基底有的上述漏洞。
@@ -64,7 +64,7 @@ finalhv = MD5( HMAC(pepper,password) + salt )
 ## 重要的其實是拖慢速度
   實作上，不管有沒有implement加pepper的做法，更重要的是一定要使用KDF(Key Derivation Function)，一般的hash function設計時，其實運算速度是求快的，這對於attacker是有利的。以MD5為例，它不被建議使用，並非其hash collision的問題，而是因為運算過快，加上現在GPU的運算能力非常強大，如果單單只用hash function和random salt，brute force的攻擊其實威脅性蠻大的。KDF會讓hash的動作做大量的iteration，來拉長最後產出key值(password加工到最後的值)的時間。
 
-## 讓我搞混很久的部分
+## 容易搞混的部分
   PBKDF2是蠻常被實作的KDF，這個Funtion內部的Algorithm又會使用到HMAC函式，但大部分看到的解釋僅僅是說HMAC的特性很適合拿來做KDF的一部份，HMAC在裡面的使用方法蠻特別的會把我們的password拿來當key使用而非message，至於詳細原因為何可能還要花時間研究(XD就是不會研究了)。
 **但並不是說因為PBKDF2裡面有用到HMAC，所以一定要提供pepper**，剛剛有說到PBKDF2內部的HMAC，是拿我們要保護的password來扮演HMAC中key的腳色(本來該由pepper擔綱)，所以我們一樣只需要提供salt跟password就可以implement PBKDF2了。
 那如果我們要也想加入pepper來提高安全性呢，那我們流程應該變成，使用HMAC，以password跟pepper為input，並把 HMAC的ouput視為新的password，與salt一起當做PBKDF2的input。
