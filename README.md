@@ -47,7 +47,7 @@ MD5(password+random salt)
 
 
 ## Pepper，加還不加
-Pepper(secret key)搭配HMAC(keyed-hash message authentication code)這樣的方法，目的是即使在salt跟hash過的值雙雙暴露之下，在attacker絕對不知道pepper的假設之下，讓他連dictionary這樣的brute force攻擊都無法進行，但pepper必須絕對保密才有意義(跟salt相反)。通常會使用的pattern會像:
+Pepper(secret key)搭配HMAC(keyed-hash message authentication code)這樣的方法，目的是即使在salt跟hash過的值雙雙曝露之下，假設attacker絕對不知道pepper，讓他連dictionary這樣的brute force攻擊都無法進行，但pepper必須絕對保密才有意義(跟salt相反)。通常會使用的pattern會像:
 ```
 finalhv = MD5( HMAC(pepper,password) + salt )
 ```
