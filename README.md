@@ -54,7 +54,7 @@ finalhv = MD5( HMAC(pepper,password) + salt )
 即使利用資料庫裡能見的finalhv值跟salt，brute force出 HMAC ( pepper , password )的值，因為pepper的絕對保密，它也無法算出最後的password。
 到這裡又要自問自答一下:
 
-##### pepper雖然不知道，但不能用brute force的方法猜嗎 ?
++pepper雖然不知道，但不能用brute force的方法猜嗎 ?
 這樣的情況下要猜pepper的值的話，假設它是random的128 bit，保證算到天荒地老算不出來。[連結裡有計算範例](http://stackoverflow.com/questions/1354999/keep-me-logged-in-the-best-approach)
 
 ##### pepper為甚麼一定要搭配HMAC ? 不能用一般的hash function就好?
