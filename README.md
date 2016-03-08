@@ -4,17 +4,23 @@
 主要因為想要準備一套會員機制的模組，必須面對像是密碼、Cookie的保存問題，基於職業道德^^"，想研究一下要怎麼implement才是比較安全的做法，文章以自言自語的方式進行，是幫助我在看完一大堆相關文章後，釐清實作上一些措施的因果關係，避免作出不知所以然的程式碼。一些名詞解釋目前先不打算寫上來，因為reference的連結裡都寫得很好了。對這領域沒有深耕，也只是歸納一些不負責心得，蠻希望有大大可以狠狠的甩臉指正的XD
 
 ## 密碼不加上salt做hash
-```MD5(password)```
+```
+MD5(password)
+```
 大家會用的密碼重複的機率是很大的，因為可能拿來當密碼的不外乎可能是名詞、名字、生日或身分ID，其組成性質是有很多限制，它在字符所有可能的排列組合中其實占的部分並不大。
 假設今天我們因為資料庫的外洩，密碼欄位雖然都是hash值，但是dictionary(收錄各種可能是密碼的字符組合，並將它們都做hash，完成一張有著一對對明碼跟hash值的precomputed table)現在非常普遍，只要拿著洩漏資料庫裡密碼的hash值來比對，很有可能就被比對到了。如果你的會員量蠻大的，對密碼欄位做group，那些常用密碼的hash值，可能就會被發現是高頻率的。而先從這些下手做dictionary attack，成功機率大大提高，也相對有效率(解了一個就等於解了很多個)，這樣的做法被稱為Statistics Attack(或Reverse lookup table)。
 
 ## 密碼加上salt做 hash，但salt的值是固定的，都用同一個
-```MD5(password+salt)```
+```
+MD5(password+salt)
+```
 在上述資料庫外洩的情況，倘若加了固定的salt，的確會讓precompute table失效，但如果那個固定的salt也存在資料庫的某個欄位，那attacker只要找到它，並將它與在本來在dictionary裡的字符組合，就可以重新運算hash值，產生新的對照表，這樣情形就跟沒加salt一樣了。此時資料庫中相同的密碼，其hash值還是一樣，還是可以group出高頻率的hash值。
 所以保護salt變得重要，因為它是固定的，如果不是存在資料庫，那就可能是hard-coded在後端程式碼，那就要確保你的後端程式碼不會外洩，但資料庫外洩有一個很大的可能是因為你的後端程式碼已經暴露了，所以比較好的方法還是讓每個使用者的密碼搭配的salt都是不一樣的!
 
 ## 密碼加上random salt做hash
-```MD5(password+random salt)```
+```
+MD5(password+random salt)
+```
 讓每個password都加上一個random的salt再做hash，這個salt值不需要再做甚麼處理，直接存在資料庫，為甚麼固定的時候保護就很重要，現在就可以那麼赤裸的存在資料庫? 因為這不影響它要達到的效果。
 
 ###第一 : 杜絕Statistics Attack
@@ -33,7 +39,9 @@
 
 ## Pepper，加還不加
 pepper(secret key)搭配HMAC(keyed-hash message authentication code)這樣的方法，目的是即使在salt跟hash過的值雙雙暴露之下，在attacker絕對不知道pepper的假設之下，讓他連dictionary這樣的brute force攻擊都無法進行，但pepper必須絕對保密才有意義(跟salt相反)。通常會使用的pattern會像:
-```finalhv = MD5( HMAC(pepper,password) + salt )```
+```
+finalhv = MD5( HMAC(pepper,password) + salt )
+```
 即使利用資料庫裡能見的finalhv值跟salt，brute force出 HMAC ( pepper , password )的值，因為pepper的絕對保密，它也無法算出最後的password。
 到這裡又要自問自答一下
 
