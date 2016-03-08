@@ -12,7 +12,7 @@ MD5(password)
 假設今天我們因為資料庫的外洩，密碼欄位雖然都是hash值，但是dictionary(收錄各種可能是密碼的字符組合，並將它們都做hash，完成一張有著一對對明碼跟hash值的precomputed table)現在非常普遍，只要拿著洩漏資料庫裡密碼的hash值來比對，很有可能就被比對到了。如果你的會員量蠻大的，對密碼欄位做group，那些常用密碼的hash值，可能就會被發現是高頻率的。而先從這些下手做dictionary attack，成功機率大大提高，也相對有效率(解了一個就等於解了很多個)，這樣的做法被稱為Statistics Attack(或Reverse lookup table)。
 
 
-##密碼加上固定salt做hash
+##密碼加上固定salt做hash (X)
 ```
 MD5(password+salt)
 ```
@@ -20,9 +20,9 @@ MD5(password+salt)
 所以保護salt變得重要，因為它是固定的，如果不是存在資料庫，那就可能是hard-coded在後端程式碼，那就要確保你的後端程式碼不會外洩，但資料庫外洩有一個很大的可能是因為你的後端程式碼已經暴露了，所以比較好的方法還是讓每個使用者的密碼搭配的salt都是不一樣的!
 
 
-## 密碼加上random salt做hash
+## 密碼加上random salt做hash (X)
 ```
-MD5(password+random salt)
+MD5(password+random salt) 
 ```
 讓每個password都加上一個random的salt再做hash，這個salt值不需要再做甚麼處理，直接存在資料庫，為甚麼固定的時候保護就很重要，現在就可以那麼赤裸的存在資料庫? 因為這不影響它要達到的效果:
 
