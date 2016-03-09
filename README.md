@@ -119,3 +119,7 @@ References
  * http://stackoverflow.com/questions/8952807/openssl-digest-vs-hash-vs-hash-hmac-difference-between-salt-hmac
    
    這篇以非常簡單的方式解釋KDF的演算法，有助於之後implement KDF，值得一看。
+
+### Length-Extension-Attacks
+
+ * https://blog.skullsecurity.org/2012/everything-you-need-to-know-about-hash-length-extension-attacks
