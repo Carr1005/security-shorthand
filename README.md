@@ -12,7 +12,7 @@ MD5(password)
 假設今天我們因為資料庫的外洩，密碼欄位雖然都是hash值，但是dictionary(收錄各種可能是密碼的字符組合，並將它們都做hash，完成一張有著一對對明碼跟hash值的precomputed table)現在非常普遍，只要拿著洩漏資料庫中密碼的hash值來比對，有很大的機會可以比對到。如果你的會員量蠻大的，對密碼欄位做group，那些常用密碼的hash值，可能就會被發現是高頻率的。而先從這些下手做dictionary attack，成功機率大大提高，也相對有效率(解了一個就等於解了很多個)，這樣的做法被稱為Statistics Attack(或Reverse lookup table)。
 
 
-##密碼加上固定salt做hash (X)
+## 密碼加上固定salt做hash (X)
 ```
 MD5(password+salt)
 ```
